@@ -1,55 +1,534 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>โครงสร้างคณะผู้บริหาร | บริษัท NONYUBAN จำกัด</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Prompt / Sarabun Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Prompt', sans-serif;
-    }
-  </style>
-</head>
-<body class="bg-slate-50 text-slate-800 min-h-screen py-12 px-4 sm:px-6 lg:px-8">
 
-  <div class="max-w-5xl mx-auto">
-    <!-- Header -->
-    <div class="text-center mb-12 space-y-3">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-600 border border-indigo-200 shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
-        <span>บริษัท NONYUBAN จำกัด</span>
-      </div>
-      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
-        โครงสร้างคณะผู้บริหาร
-      </h1>
-      <p class="text-slate-500 text-sm md:text-base max-w-xl mx-auto">
-        คณะผู้บริหารผู้ขับเคลื่อนวิสัยทัศน์และการเติบโตอย่างยั่งยืนขององค์กร
-      </p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บริษัท NONYUBAN จำกัด - Modern 3D Team Gallery</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Sarabun & Playfair Display) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #07090e;
+            --card-width: 280px;
+            --card-height: 410px;
+        }
+
+        body {
+            font-family: "Sarabun", sans-serif;
+            background-color: var(--bg-dark);
+            color: #f3f4f6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .title-font {
+            font-family: "Playfair Display", "Sarabun", serif;
+        }
+
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.10) 0%, transparent 60%);
+        }
+
+        /* 3D Perspective Container & Cards */
+        .card-wrap {
+            transform: perspective(1000px);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
+            background-color: #121622;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 
+                rgba(0, 0, 0, 0.7) 0 25px 50px -12px, 
+                inset #1f293d 0 0 0 2px, 
+                inset rgba(255, 255, 255, 0.15) 0 0 0 3px;
+            transition: 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+        }
+
+        .card-wrap:hover .card {
+            box-shadow: 
+                rgba(99, 102, 241, 0.45) 0 0 35px 5px, 
+                rgba(255, 255, 255, 0.8) 0 0 0 1px, 
+                rgba(0, 0, 0, 0.8) 0 30px 60px 0, 
+                inset #6366f1 0 0 0 3px;
+        }
+
+        .card-bg {
+            opacity: 0.85;
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: calc(100% + 60px);
+            height: calc(100% + 60px);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            transition: 0.8s cubic-bezier(0.445, 0.05, 0.55, 0.95), opacity 0.5s ease;
+            pointer-events: none;
+            filter: saturate(1.1) contrast(1.05);
+        }
+
+        .card-wrap:hover .card-bg {
+            opacity: 1;
+            transition: 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .card-info {
+            padding: 22px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: #fff;
+            transform: translateY(30%);
+            transition: transform 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+            background: linear-gradient(to top, rgba(7, 9, 14, 0.98) 0%, rgba(7, 9, 14, 0.75) 60%, transparent 100%);
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .card-wrap:hover .card-info {
+            transform: translateY(0);
+        }
+
+        .card-info p, .card-info .tags {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.5s 0.1s cubic-bezier(0.215, 0.61, 0.355, 1), transform 0.5s 0.1s cubic-bezier(0.215, 0.61, 0.355, 1);
+        }
+
+        .card-wrap:hover .card-info p, 
+        .card-wrap:hover .card-info .tags {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glassmorphism Presentation Modal */
+        .glass-panel {
+            background: rgba(18, 24, 38, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #07090e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #374151;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen text-slate-100 flex flex-col justify-between relative selection:bg-indigo-500 selection:text-white">
+
+    <div class="ambient-bg"></div>
+
+    <header class="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-building text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-xl md:text-2xl tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-amber-200 via-white to-indigo-300">
+                    บริษัท NONYUBAN จำกัด
+                </h1>
+                <p class="text-xs text-indigo-400 font-medium">NONYUBAN Co., Ltd. • Leadership Gallery</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="openBriefModal()" class="px-4 py-2.5 text-xs md:text-sm font-semibold rounded-xl glass-panel hover:bg-white/10 text-indigo-300 hover:text-white transition-all flex items-center gap-2 border border-indigo-500/30 shadow-lg shadow-indigo-950/50">
+                <i class="fa-solid fa-file-contract text-indigo-400"></i>
+                <span>Brief Concept & Client Brief</span>
+            </button>
+            <a href="https://github.com" target="_blank" class="px-4 py-2.5 text-xs md:text-sm font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-600/30 flex items-center gap-2">
+                <i class="fa-brands fa-github text-base"></i>
+                <span class="hidden sm:inline">GitHub Repository</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-1 flex flex-col justify-center items-center px-4 py-6">
+        
+        <!-- Section Title Header -->
+        <div class="text-center max-w-3xl mx-auto mb-8">
+            <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest bg-gradient-to-r from-indigo-500/20 to-pink-500/20 text-indigo-300 border border-indigo-500/30 inline-block mb-3">
+                Agentic UI 3D Interactive Showcase
+            </span>
+            <h2 class="title-font text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-3">
+                ทีมบริหารและผู้เชี่ยวชาญ 4 สายงานหลัก
+            </h2>
+            <p class="text-slate-400 text-sm md:text-base leading-relaxed">
+                ขยับเมาส์สัมผัสประสบการณ์ 3D Parallax Perspective ในแต่ละสายงานของ บริษัท NONYUBAN จำกัด
+            </p>
+        </div>
+
+        <!-- 3D Card Gallery -->
+        <div class="w-full max-w-7xl mx-auto">
+            <div id="app" class="flex flex-wrap justify-center items-center gap-6 md:gap-8 py-4 min-h-[460px]">
+                <!-- Vue Cards Container -->
+                <card v-for="(member, index) in team" 
+                      :key="index"
+                      :data-image="member.image"
+                      :is-active="currentIndex === index"
+                      @click.native="openMemberModal(member)">
+                    <div slot="header" class="mb-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-950/80 px-2.5 py-1 rounded-md inline-block mb-1.5 border border-indigo-500/30">{{ member.role }}</span>
+                        <h1 class="title-font text-2xl font-bold text-white tracking-wide leading-tight">{{ member.name }}</h1>
+                    </div>
+                    <div slot="content">
+                        <p class="text-xs text-slate-300 leading-relaxed mb-3">{{ member.bio }}</p>
+                        <div class="tags flex flex-wrap gap-1.5 pt-2 border-t border-slate-700/50">
+                            <span v-for="skill in member.skills" :key="skill" class="text-[10px] px-2 py-0.5 rounded-md bg-slate-800/80 text-indigo-300 border border-indigo-500/20">
+                                {{ skill }}
+                            </span>
+                        </div>
+                    </div>
+                </card>
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-4 mt-6">
+            <div class="flex items-center gap-4">
+                <button onclick="appInstance.prevSlide()" class="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-400 transition-all shadow-lg active:scale-95 group">
+                    <i class="fa-solid fa-chevron-left group-hover:-translate-x-0.5 transition-transform"></i>
+                </button>
+
+                <div class="flex items-center gap-2 px-5 py-2.5 rounded-full glass-panel border border-slate-800">
+                    <template v-for="(member, idx) in team">
+                        <button onclick="appInstance.setSlide(idx)"
+                                :class="['h-2.5 rounded-full transition-all duration-300', currentIndex === idx ? 'w-8 bg-indigo-500 shadow-lg shadow-indigo-500/50' : 'w-2.5 bg-slate-700 hover:bg-slate-500']">
+                        </button>
+                    </template>
+                </div>
+
+                <button onclick="appInstance.nextSlide()" class="w-12 h-12 rounded-full glass-panel flex items-center justify-center text-white hover:bg-indigo-600 hover:border-indigo-400 transition-all shadow-lg active:scale-95 group">
+                    <i class="fa-solid fa-chevron-right group-hover:translate-x-0.5 transition-transform"></i>
+                </button>
+            </div>
+            <p class="text-xs text-slate-500">คลิกที่การ์ดเพื่อดูรายละเอียดประวัติบุคลากรแบบเจาะลึก</p>
+        </div>
+
+    </main>
+
+    <div id="briefModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-4xl max-h-[90vh] rounded-2xl p-6 md:p-8 overflow-y-auto border border-indigo-500/30 shadow-2xl relative text-slate-200">
+            
+            <button onclick="closeBriefModal()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-slate-800/80 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-6">
+                <span class="w-3 h-8 bg-gradient-to-b from-amber-400 to-indigo-500 rounded-full"></span>
+                <div>
+                    <h3 class="title-font text-2xl md:text-3xl font-bold text-white">เอกสารนำเสนอผลงาน & Concept Brief</h3>
+                    <p class="text-xs text-indigo-400">สำหรับ บริษัท NONYUBAN จำกัด (NONYUBAN Co., Ltd.)</p>
+                </div>
+            </div>
+
+            <div class="space-y-6 text-sm leading-relaxed">
+                <!-- Executive Summary -->
+                <div class="p-4 rounded-xl bg-indigo-950/40 border border-indigo-500/20">
+                    <h4 class="font-bold text-amber-300 text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-bullseye"></i> Executive Summary
+                    </h4>
+                    <p class="text-slate-300">
+                        เว็บแอปพลิเคชันนี้ถูกสร้างขึ้นเพื่อนำเสนอโครงสร้างผู้บริหารของ <strong>บริษัท NONYUBAN จำกัด</strong> ในรูปแบบ <strong>Agentic 3D Parallax Interactive Gallery</strong> 
+                        ประกอบด้วยตำแหน่งสำคัญ ได้แก่ <strong>1. ประธานบริษัท, 2. ฝ่ายการเงิน, 3. ฝ่ายปฏิบัติการ และ 4. ฝ่ายการตลาด</strong> 
+                        โดยใช้ภาพบุคลากรจริงและออกแบบด้วย Visual & Interaction Level ล้ำสมัยเพื่อสร้างความน่าเชื่อถือให้กับองค์กร
+                    </p>
+                </div>
+
+                <!-- 1. Design & UX Concept -->
+                <div>
+                    <h4 class="font-bold text-white text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-palette text-indigo-400"></i> 1. แนวความคิดการออกแบบ (Design & UX Concept)
+                    </h4>
+                    <ul class="list-disc list-inside space-y-1.5 text-slate-300 pl-2">
+                        <li><strong>Agentic 3D Parallax Depth:</strong> เมื่อเมาส์เคลื่อนที่ผ่าน Card จะเกิดแรงเอียงสมจริง (rotateX, rotateY) ขณะที่ภาพพื้นหลังฉายแบบ Parallax ซ้อนมิติ สร้าง visual dynamic ที่ดึงดูดสายตา</li>
+                        <li><strong>Dark Luxury Palette:</strong> ใช้เฉดสีมืดลุ่มลึกผสานกับสีทองเกรเดียนต์และนีออนอินดิโก เพื่อสื่อถึงความทันสมัยและความมั่นคงขององค์กร</li>
+                        <li><strong>Responsiveness & Smooth Interaction:</strong> รองรับการปัดและแสดงผลอย่างเรียบร้อยสมบูรณ์บนทุกหน้าจอทั้ง มือถือ แท็บเล็ต และเดสก์ท็อป</li>
+                    </ul>
+                </div>
+
+                <!-- 2. Team Structure Breakdown -->
+                <div>
+                    <h4 class="font-bold text-white text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-users text-indigo-400"></i> 2. สมาชิกทีมงานทั้ง 4 ฝ่ายหลัก
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                            <span class="text-xs font-bold text-amber-400">01. ประธานบริษัท (CEO)</span>
+                            <p class="font-semibold text-white">คุณสุจิตราภรณ์ หาแสง</p>
+                            <p class="text-xs text-slate-400 mt-1">วางทิศทางและวิสัยทัศน์ความมั่นคงของ บริษัท NONYUBAN จำกัด</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                            <span class="text-xs font-bold text-indigo-400">02. ฝ่ายการเงิน (CFO)</span>
+                            <p class="font-semibold text-white">คุณเกรียงศักดิ์ ปานสวย</p>
+                            <p class="text-xs text-slate-400 mt-1">กำกับดูแลผลประโยชน์ การลงทุน และความเสถียรภาพทางการเงิน</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                            <span class="text-xs font-bold text-indigo-400">03. ฝ่ายปฏิบัติการ (COO)</span>
+                            <p class="font-semibold text-white">คุณรดา นกเสวก</p>
+                            <p class="text-xs text-slate-400 mt-1">ควบคุมระบบการบริหารงาน internal flow ให้เกิดประสิทธิภาพสูงสุด</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                            <span class="text-xs font-bold text-indigo-400">04. ฝ่ายการตลาด (CMO)</span>
+                            <p class="font-semibold text-white">คุณลัดดาวัลย์ ราหุละ</p>
+                            <p class="text-xs text-slate-400 mt-1">วางแผนกลยุทธ์การตลาด การสื่อสารแบรนด์ และขยายฐานลูกค้า</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Deployment Guide for GitHub -->
+                <div>
+                    <h4 class="font-bold text-white text-base mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up text-indigo-400"></i> 3. การนำขึ้นแสดงผลบน GitHub Pages
+                    </h4>
+                    <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 font-mono text-xs text-slate-300 space-y-2">
+                        <p class="text-indigo-400"># 1. สร้าง Git Repository และ Commit ไฟล์</p>
+                        <p>git init</p>
+                        <p>git add index.html images/</p>
+                        <p>git commit -m "Deploy NONYUBAN Co., Ltd. Team Gallery"</p>
+                        <p class="text-indigo-400 mt-2"># 2. Push ขึ้น GitHub</p>
+                        <p>git branch -M main</p>
+                        <p>git remote add origin https://github.com/your-username/nonyuban-gallery.git</p>
+                        <p>git push -u origin main</p>
+                        <p class="text-indigo-400 mt-2"># 3. เปิดใช้งาน GitHub Pages</p>
+                        <p class="text-slate-400">ไปที่ Repository Settings > Pages > Source เลือก 'main' branch แล้วกด Save</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-slate-800 flex justify-end">
+                <button onclick="closeBriefModal()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/30">
+                    ปิดหน้าต่างนำเสนอ
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- Executive Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      <!-- คนที่ 1: รดา นกเสวก -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col sm:flex-row items-center sm:items-start gap-5">
-        <div class="relative w-32 h-32 md:w-36 md:h-36 rounded-xl overflow-hidden shrink-0 ring-2 ring-indigo-500/20 shadow-inner">
-          <img src="image.jpg" alt="รดา นกเสวก" class="w-full h-full object-cover object-top" />
+    <div id="memberModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-lg rounded-2xl p-6 border border-indigo-500/30 shadow-2xl relative text-slate-200" id="memberModalContent">
+            <!-- Modal Content Populated via Vue -->
         </div>
-        <div class="text-center sm:text-left space-y-2 flex-1">
-          <span class="inline-block text-[11px] font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-2.5 py-0.5 rounded-md">
-            ฝ่ายบริหารองค์กร
-          </span>
-          <h3 class="text-lg md:text-xl font-bold text-slate-900">
-            รดา นกเสวก
-          </h3>
-          <p class="text-xs md:text-sm font-semibold text-amber-600">
-            ประธานกรรมการบริหาร (CEO)
-          </p>
-          <p class="text-xs text-slate-600 leading-relaxed pt-1">
-            รับผิดชอบการกำหนดวิสัยทัศน์ วางทิศทางกลยุทธ์หลัก และขับเคลื่อนการเติบโตอย่างยั่งยืนของ บริษัท NONYUBAN จำกัด
-          </p>
-          <div class="flex flex-wrap gap-1.5 justify-center sm:
+    </div>
+
+    <footer class="relative z-10 w-full max-w-7xl mx-auto px-6 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 บริษัท NONYUBAN จำกัด • Inspired by Agentic UI Design Systems</p>
+    </footer>
+
+    <!-- Vue 2 Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.14/vue.min.js"></script>
+
+    <script>
+        Vue.config.devtools = false;
+
+        // 3D Parallax Card Component
+        Vue.component('card', {
+            template: `
+            <div class="card-wrap"
+                 @mousemove="handleMouseMove"
+                 @mouseenter="handleMouseEnter"
+                 @mouseleave="handleMouseLeave"
+                 ref="card">
+                <div class="card" :style="cardStyle">
+                    <div class="card-bg" :style="[cardBgTransform, cardBgImage]"></div>
+                    <div class="card-info">
+                        <slot name="header"></slot>
+                        <slot name="content"></slot>
+                    </div>
+                </div>
+            </div>`,
+            mounted() {
+                this.updateDimensions();
+                window.addEventListener('resize', this.updateDimensions);
+            },
+            beforeDestroy() {
+                window.removeEventListener('resize', this.updateDimensions);
+            },
+            props: ['dataImage', 'isActive'],
+            data: () => ({
+                width: 0,
+                height: 0,
+                mouseX: 0,
+                mouseY: 0,
+                mouseLeaveDelay: null
+            }),
+            computed: {
+                mousePX() {
+                    return this.width ? this.mouseX / this.width : 0;
+                },
+                mousePY() {
+                    return this.height ? this.mouseY / this.height : 0;
+                },
+                cardStyle() {
+                    const rX = this.mousePX * 26;
+                    const rY = this.mousePY * -26;
+                    return {
+                        transform: `rotateY(${rX}deg) rotateX(${rY}deg)`
+                    };
+                },
+                cardBgTransform() {
+                    const tX = this.mousePX * -35;
+                    const tY = this.mousePY * -35;
+                    return {
+                        transform: `translateX(${tX}px) translateY(${tY}px)`
+                    };
+                },
+                cardBgImage() {
+                    return {
+                        backgroundImage: `url('${this.dataImage}')`
+                    };
+                }
+            },
+            methods: {
+                updateDimensions() {
+                    if (this.$refs.card) {
+                        this.width = this.$refs.card.offsetWidth;
+                        this.height = this.$refs.card.offsetHeight;
+                    }
+                },
+                handleMouseMove(e) {
+                    if (!this.$refs.card) return;
+                    const rect = this.$refs.card.getBoundingClientRect();
+                    this.mouseX = e.clientX - rect.left - this.width / 2;
+                    this.mouseY = e.clientY - rect.top - this.height / 2;
+                },
+                handleMouseEnter() {
+                    clearTimeout(this.mouseLeaveDelay);
+                },
+                handleMouseLeave() {
+                    this.mouseLeaveDelay = setTimeout(() => {
+                        this.mouseX = 0;
+                        this.mouseY = 0;
+                    }, 800);
+                }
+            }
+        });
+
+        // Main Vue Instance for บริษัท NONYUBAN จำกัด
+        let appInstance = new Vue({
+            el: '#app',
+            data: {
+                currentIndex: 0,
+                team: [
+                    {
+                        name: 'คุณสุจิตราภรณ์ หาแสง',
+                        role: 'ประธานบริษัท (CEO)',
+                        bio: 'กำกับดูแลทิศทางและเป้าหมายความเติบโตอย่างยั่งยืนของ บริษัท NONYUBAN จำกัด',
+                        detailBio: 'เป็นผู้นำด้านการวางกลยุทธ์องค์กร กำหนดวิสัยทัศน์ความมั่นคง มุ่งเน้นการสร้างผลกำไรและความเสถียรภาพให้กับผู้ถือหุ้นและบุคลากรทุกฝ่าย',
+                        skills: ['Leadership', 'Corporate Strategy', 'Visionary'],
+                        image: 'images/1.jpg'
+                    },
+                    {
+                        name: 'คุณเกรียงศักดิ์ ปานสวย',
+                        role: 'ฝ่ายการเงิน (CFO)',
+                        bio: 'วางแผนและบริหารจัดการสภาพคล่องทางการเงิน ดำเนินการให้องค์กรเติบโตอย่างมั่นคง',
+                        detailBio: 'เชี่ยวชาญด้านการวิเคราะห์ความเสี่ยง งบประมาณรายรับ-รายจ่าย ตลอดจนการบริหารพอร์ตการลงทุนและการวางแผนภาษีขององค์กร',
+                        skills: ['Financial Planning', 'Asset Mgmt', 'Risk Analysis'],
+                        image: 'images/2.jpg'
+                    },
+                    {
+                        name: 'คุณรดา นกเสวก',
+                        role: 'ฝ่ายปฏิบัติการ (COO)',
+                        bio: 'ดูแลกระบวนการทำงานภายในอย่างมีประสิทธิภาพ เพื่อให้การดำเนินงานราบรื่นไร้รอยต่อ',
+                        detailBio: 'บริหารจัดการกระบวนการทำงานภายใน ควบคุมมาตรฐานคุณภาพองค์กร การทำงานข้ามแผนก และการพัฒนาทักษะทรัพยากรบุคคล',
+                        skills: ['Operations', 'Process Optimization', 'Management'],
+                        image: 'images/3.jpg'
+                    },
+                    {
+                        name: 'คุณลัดดาวัลย์ ราหุละ',
+                        role: 'ฝ่ายการตลาด (CMO)',
+                        bio: 'ขับเคลื่อนแบรนด์และสร้างการเติบโตของฐานลูกค้า ขยายตลาดให้เติบโตอย่างต่อเนื่อง',
+                        detailBio: 'สร้างแคมเปญการตลาดล้ำสมัย ทำการวิจัยพฤติกรรมผู้บริโภค บริหารช่องทางการสื่อสารแบรนด์ และเพิ่มยอดขายทะลุเป้าหมาย',
+                        skills: ['Digital Marketing', 'Brand Strategy', 'Growth'],
+                        image: 'images/4.jpg'
+                    }
+                ]
+            },
+            methods: {
+                nextSlide() {
+                    this.currentIndex = (this.currentIndex + 1) % this.team.length;
+                },
+                prevSlide() {
+                    this.currentIndex = (this.currentIndex - 1 + this.team.length) % this.team.length;
+                },
+                setSlide(index) {
+                    this.currentIndex = index;
+                },
+                openMemberModal(member) {
+                    const modal = document.getElementById('memberModal');
+                    const modalContent = document.getElementById('memberModalContent');
+                    modalContent.innerHTML = `
+                        <button onclick="closeMemberModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-slate-800/80 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                        <div class="flex items-center gap-4 mb-4">
+                            <img src="${member.image}" class="w-20 h-20 rounded-xl object-cover border-2 border-indigo-500 shadow-lg">
+                            <div>
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">${member.role}</span>
+                                <h3 class="title-font text-2xl font-bold text-white">${member.name}</h3>
+                                <p class="text-xs text-indigo-300">บริษัท NONYUBAN จำกัด</p>
+                            </div>
+                        </div>
+                        <div class="p-3.5 bg-slate-900/80 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed mb-4">
+                            ${member.detailBio}
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            ${member.skills.map(s => `<span class="text-xs px-2.5 py-1 rounded-md bg-indigo-950 text-indigo-300 border border-indigo-500/30">${s}</span>`).join('')}
+                        </div>
+                    `;
+                    modal.classList.remove('opacity-0', 'pointer-events-none');
+                }
+            }
+        });
+
+        function openBriefModal() {
+            const modal = document.getElementById('briefModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeBriefModal() {
+            const modal = document.getElementById('briefModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function closeMemberModal() {
+            const modal = document.getElementById('memberModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+    </script>
+</body>
+
+</html>
