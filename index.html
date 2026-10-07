@@ -1,1 +1,261 @@
+"use client";
 
+import React, { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence, PanInfo } from "framer-motion";
+import { ChevronLeft, ChevronRight, Pause, Play, Building2, UserCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export interface TeamMemberCard {
+  id: string | number;
+  name: string;
+  role: string;
+  department: string;
+  bio: string;
+  skills: string[];
+  imageUrl: string;
+}
+
+export interface RollingCardStackProps {
+  items?: TeamMemberCard[];
+  autoPlay?: boolean;
+  interval?: number;
+  className?: string;
+  companyName?: string;
+}
+
+const DEFAULT_TEAM_MEMBERS: TeamMemberCard[] = [
+  {
+    id: 1,
+    name: "รดา นกเสวก",
+    role: "ประธานกรรมการบริหาร (CEO)",
+    department: "ฝ่ายบริหารองค์กร",
+    bio: "รับผิดชอบการกำหนดวิสัยทัศน์ วางทิศทางกลยุทธ์หลัก และขับเคลื่อนการเติบโตอย่างยั่งยืนของ บริษัท NONYUBAN จำกัด",
+    skills: ["Executive Leadership", "Strategic Planning", "Business Growth"],
+    imageUrl: "/images/rada.jpg", //
+  },
+  {
+    id: 2,
+    name: "สุจิตราภรณ์ แสงหา",
+    role: "ผู้อำนวยการฝ่ายการเงิน (CFO)",
+    department: "ฝ่ายบริหารการเงินและการลงทุน",
+    bio: "กำกับดูแลโครงสร้างทางการเงิน การบริหารจัดการความเสี่ยง การลงทุนเชิงกลยุทธ์ และความเสถียรภาพทางการเงินของบริษัท",
+    skills: ["Financial Strategy", "Asset Management", "Risk Control"],
+    imageUrl: "/images/sujitraphorn.jpg", //
+  },
+  {
+    id: 3,
+    name: "ลัดดาวัลย์ ราหุละ",
+    role: "ผู้อำนวยการฝ่ายปฏิบัติการ (COO)",
+    department: "ฝ่ายปฏิบัติการและทรัพยากรบุคคล",
+    bio: "ดูแลกระบวนการทำงานภายใน บริหารจัดการประสิทธิภาพขององค์กร และพัฒนาบุคลากรเพื่อขับเคลื่อนเป้าหมายร่วมกัน",
+    skills: ["Operations Management", "Process Optimization", "HR Leadership"],
+    imageUrl: "/images/laddawan.jpg", //
+  },
+  {
+    id: 4,
+    name: "เกรียงศักดิ์ ปานสวย",
+    role: "ผู้อำนวยการฝ่ายเทคโนโลยีและสารสนเทศ (CTO)",
+    department: "ฝ่ายเทคโนโลยีและนวัตกรรม",
+    bio: "ผู้นำด้านการวางระบบโครงสร้างพื้นฐานดิจิทัล พัฒนานวัตกรรมซอฟต์แวร์ และยกระดับมาตรฐานความปลอดภัยทางไซเบอร์",
+    skills: ["Tech Architecture", "Software Engineering", "Cybersecurity"],
+    imageUrl: "/images/kriangsak.jpg", //
+  },
+];
+
+export function RollingCardStack({
+  items = DEFAULT_TEAM_MEMBERS,
+  autoPlay = true,
+  interval = 4000,
+  className,
+  companyName = "บริษัท NONYUBAN จำกัด",
+}: RollingCardStackProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(autoPlay);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % items.length);
+  }, [items.length]);
+
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+  }, [items.length]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const timer = setInterval(() => {
+      handleNext();
+    }, interval);
+    return () => clearInterval(timer);
+  }, [isPlaying, interval, handleNext]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") handlePrev();
+    if (e.key === "ArrowRight") handleNext();
+    if (e.key === " ") setIsPlaying((prev) => !prev);
+  };
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.x < -50) handleNext();
+    else if (info.offset.x > 50) handlePrev();
+  };
+
+  return (
+    <div
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      role="region"
+      aria-label={`${companyName} Team Rolling Card Gallery`}
+      className={cn(
+        "relative w-full max-w-4xl mx-auto px-4 py-8 outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded-3xl",
+        className
+      )}
+    >
+      {/* Header Info */}
+      <div className="text-center mb-8 space-y-2">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800/50">
+          <Building2 className="w-3.5 h-3.5" />
+          <span>{companyName}</span>
+        </div>
+        <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">
+          โครงสร้างคณะผู้บริหาร
+        </h2>
+        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+          สามารถกดปุ่มลูกศร ปัดหน้าจอ หรือใช้แป้นพิมพ์เพื่อเลื่อนดูข้อมูลบุคลากร
+        </p>
+      </div>
+
+      {/* Card Stack Area */}
+      <div className="relative h-[480px] md:h-[420px] w-full flex items-center justify-center perspective-1000">
+        <AnimatePresence initial={false}>
+          {items.map((item, index) => {
+            // คำนวณตำแหน่ง Relative Offset จาก Current Index
+            const offset = (index - currentIndex + items.length) % items.length;
+            const isFront = offset === 0;
+
+            // แสดงผลเฉพาะ 3 การ์ดหลักเพื่อประสิทธิภาพและการสแตกที่สวยงาม
+            if (offset > 2 && offset < items.length - 1) return null;
+
+            return (
+              <motion.div
+                key={item.id}
+                drag={isFront ? "x" : false}
+                dragConstraints={{ left: 0, right: 0 }}
+                onDragEnd={handleDragEnd}
+                initial={false}
+                animate={{
+                  scale: 1 - offset * 0.06,
+                  y: offset * 18,
+                  zIndex: items.length - offset,
+                  opacity: offset > 2 ? 0 : 1 - offset * 0.25,
+                  rotateX: isFront ? 0 : -offset * 2,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 25,
+                }}
+                className={cn(
+                  "absolute w-full max-w-md md:max-w-2xl rounded-2xl p-6 border shadow-xl bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 transition-colors duration-200 cursor-grab active:cursor-grabbing",
+                  isFront ? "ring-2 ring-indigo-500/20 dark:ring-indigo-500/40" : "pointer-events-none"
+                )}
+              >
+                <div className="flex flex-col md:flex-row gap-6 items-center">
+                  {/* รูปภาพบุคลากร */}
+                  <div className="relative w-32 h-32 md:w-44 md:h-44 rounded-xl overflow-hidden shrink-0 ring-2 ring-neutral-200 dark:ring-neutral-700 shadow-md">
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className="w-full h-full object-cover object-center"
+                    />
+                  </div>
+
+                  {/* ข้อมูลรายละเอียด */}
+                  <div className="flex-1 text-center md:text-left space-y-3">
+                    <div>
+                      <span className="inline-block text-xs font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-1">
+                        {item.department}
+                      </span>
+                      <h3 className="text-xl md:text-2xl font-bold text-neutral-900 dark:text-neutral-100">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                        {item.role}
+                      </p>
+                    </div>
+
+                    <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-300 leading-relaxed line-clamp-3">
+                      {item.bio}
+                    </p>
+
+                    {/* Skill Tags */}
+                    <div className="flex flex-wrap gap-1.5 justify-center md:justify-start pt-1">
+                      {item.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2.5 py-0.5 rounded-md text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+      </div>
+
+      {/* Controls & Pagination Bar */}
+      <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-neutral-200 dark:border-neutral-800 pt-4 px-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
+            ผู้บริหาร {currentIndex + 1} จาก {items.length}
+          </span>
+        </div>
+
+        {/* Indicator Dots */}
+        <div className="flex items-center gap-1.5">
+          {items.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIndex(idx)}
+              aria-label={`ไปยังหน้าที่ ${idx + 1}`}
+              className={cn(
+                "h-2 rounded-full transition-all duration-300",
+                currentIndex === idx
+                  ? "w-6 bg-indigo-600 dark:bg-indigo-500"
+                  : "w-2 bg-neutral-300 dark:bg-neutral-700 hover:bg-neutral-400"
+              )}
+            />
+          ))}
+        </div>
+
+        {/* Buttons Nav */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsPlaying((prev) => !prev)}
+            aria-label={isPlaying ? "หยุดเล่นอัตโนมัติ" : "เล่นอัตโนมัติ"}
+            className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition-colors"
+          >
+            {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={handlePrev}
+            aria-label="การ์ดก่อนหน้า"
+            className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={handleNext}
+            aria-label="การ์ดถัดไป"
+            className="p-2 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition-colors"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
